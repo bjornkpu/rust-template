@@ -1,0 +1,93 @@
+[package]
+name = "rust-template"
+version = "0.0.0"
+edition = "2024"
+description = "One line on what the tool does."
+license = "MIT"
+repository = "https://github.com/bjornkpu/rust-template"
+homepage = "https://github.com/bjornkpu/rust-template"
+readme = "README.md"
+keywords = ["cli"]
+categories = ["command-line-utilities"]
+
+[features]
+# Terminal UI: src/app (state), src/ui (render), src/io/terminal.rs (event loop).
+# /bootstrap makes these regular dependencies for a TUI, or deletes them for a CLI.
+tui = ["dep:ratatui", "dep:crossterm", "dep:tokio"]
+
+[dependencies]
+# BK's chosen crates. Major-only pins. Uncomment one when a task needs it. Never add an
+# alternative for a job a listed crate does. Ask BK before adding anything not listed.
+# Reasons in full: docs/conventions/crates.md.
+anyhow = "1"                                       # error context, main.rs only
+thiserror = "2"                                    # AppError in src/error.rs
+clap = { version = "4", features = ["derive"] }    # command line
+serde = { version = "1", features = ["derive"] }   # (de)serialisation
+serde_json = "1"                                   # JSON in and out
+toml = "1"                                         # config files
+jiff = { version = "0.2", features = ["serde"] }   # dates and times; never chrono
+tracing = "0.1"                                    # logging, to a file, never stdout
+tracing-appender = "0.2"                           # log file writer
+tracing-subscriber = { version = "0.3", features = ["env-filter"] } # RUST_TEMPLATE_LOG=debug
+
+# TUI, behind the `tui` feature.
+ratatui = { version = "0.30", optional = true }    # rendering; TestBackend for snapshots
+crossterm = { version = "0.29", optional = true }  # terminal events; only io/terminal.rs
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"], optional = true } # TUI or network only
+
+# Catalog. One line per job, with the rule for using it.
+# reqwest = { version = "0.13", features = ["json", "query"] } # HTTP; only behind a boundary trait
+# rusqlite = { version = "0.40", features = ["bundled"] }      # SQLite, sync; default for CLIs
+# sqlx = { version = "0.9", features = ["runtime-tokio", "sqlite", "macros", "migrate"] } # SQLite, async; tokio apps wanting checked queries
+# directories = "6"                                # platform dirs; or hand-rolled XDG + RUST_TEMPLATE_HOME
+# clap_complete = "4"                              # shell completions
+# strsim = "0.11"                                  # typo suggestions ("did you mean")
+# nucleo = "0.5"                                   # interactive fuzzy picker
+# wait-timeout = "0.2"                             # timeout on spawned processes
+# sha2 = "0.11"                                    # hashing, dedupe
+# percent-encoding = "2"                           # URL encoding
+# tui-input = "0.15"                               # TUI text input
+# arboard = "3"                                    # clipboard
+# rayon = "1"                                      # parallel iterators; only once measured
+# itertools = "0.15"                               # only when std iterators fall short
+#
+# Rejected, do not suggest:
+# chrono                 -> jiff
+# once_cell, lazy_static -> std::sync::LazyLock
+# color-eyre             -> anyhow covers it
+# git2                   -> spawn git; gix only if spawning is a measured problem
+# openssl                -> rustls
+# assert_cmd             -> std::process::Command + env!("CARGO_BIN_EXE_<name>")
+
+[dev-dependencies]
+insta = "1"                                        # snapshot tests; never accept one unread
+tempfile = "3"                                     # temp dirs for RUST_TEMPLATE_HOME
+# proptest = "1"                                   # property tests; when a bug motivates one
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+# UM, ACTUALLY
+pedantic = { level = "deny", priority = -1 }
+# DEVELOPING LINTS
+nursery = { level = "deny", priority = -1 }
+# DENY PANICS
+unwrap_used = "deny"
+expect_used = "deny"
+indexing_slicing = "deny"
+arithmetic_side_effects = "deny"
+unreachable = "deny"
+unimplemented = "deny"
+unchecked_time_subtraction = "deny"
+todo = "deny"
+string_slice = "deny"
+panic_in_result_fn = "deny"
+panic = "deny"
+exit = "deny"
+as_conversions = "deny"
+
+# The profile that dist builds release binaries with.
+[profile.dist]
+inherits = "release"
+lto = "thin"

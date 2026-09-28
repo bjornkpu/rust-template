@@ -1,0 +1,9 @@
+/target
+
+# Local only: superpowers specs and plans, beads.
+docs/superpowers/
+.superpowers/
+.beads/
+.dolt/
+*.db
+.beads-credential-key
