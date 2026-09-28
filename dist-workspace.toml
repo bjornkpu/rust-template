@@ -1,0 +1,33 @@
+[workspace]
+members = ["cargo:."]
+
+# Config for 'dist'. After editing, run `dist generate` to refresh release.yml.
+[dist]
+# The dist version CI uses. Newer versions ship on GitHub releases only; see docs/releasing.md.
+cargo-dist-version = "0.33.0"
+ci = "github"
+installers = ["shell", "powershell"]
+targets = ["aarch64-apple-darwin", "aarch64-unknown-linux-gnu", "x86_64-apple-darwin", "x86_64-unknown-linux-gnu", "x86_64-pc-windows-msvc"]
+install-path = "~/.local/bin"
+hosting = "github"
+# Ships <name>-update next to the binary, so users update without re-running the installer.
+install-updater = true
+# Build provenance, checkable with `gh attestation verify`.
+github-attestations = true
+# Embeds the dependency tree, so `cargo audit bin` works on released binaries.
+cargo-auditable = true
+
+# Off by default. Uncomment when a project needs one.
+# cargo-cyclonedx = true                  # SBOM file per release
+# installers = ["shell", "powershell", "homebrew", "msi", "npm"]
+# tap = "bjornkpu/homebrew-tap"           # homebrew installer needs a tap repo...
+# publish-jobs = ["homebrew"]             # ...and a job that pushes the formula
+# pr-run-mode = "upload"                  # build release artifacts on PRs, slower PR CI
+# github-build-setup = "../build-setup.yml" # extra CI steps before building (CUDA, clang)
+# install-success-msg = "run `rust-template init` next"
+# include = ["docs/config.example.toml"]  # extra files in the archive
+# [dist.bin-aliases]
+# rust-template = ["rt"]                  # short alias installed next to the binary
+# [dist.dependencies.apt]
+# libfoo-dev = "*"                        # system packages for the build
+# Never: dispatch-releases = true. Releases start from the tag release-plz pushes.
