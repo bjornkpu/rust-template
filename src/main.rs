@@ -3,9 +3,13 @@
 //! Wiring only: parse arguments, start logging, call `domain` for decisions and `io` for
 //! effects. `anyhow` is used here and nowhere else.
 
+#[cfg(feature = "tui")]
+mod app;
 mod domain;
 mod error;
 mod io;
+#[cfg(feature = "tui")]
+mod ui;
 
 use anyhow::Result;
 use clap::{Parser, Subcommand};
@@ -27,6 +31,9 @@ enum Command {
         #[arg(default_value = "world")]
         name: String,
     },
+    /// Open the terminal UI.
+    #[cfg(feature = "tui")]
+    Tui,
 }
 
 fn main() -> Result<()> {
@@ -42,6 +49,8 @@ fn main() -> Result<()> {
             tracing::debug!(%name, "greet");
             println!("{}", domain::greet::greeting(&name));
         }
+        #[cfg(feature = "tui")]
+        Command::Tui => io::terminal::run()?,
     }
     Ok(())
 }
