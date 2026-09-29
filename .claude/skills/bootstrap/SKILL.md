@@ -24,7 +24,8 @@ Derive: `snake` = name with `-` replaced by `_`; `SCREAM` = `snake` uppercased.
 
 ## 1b. Baseline
 
-Before any edit run the step 6 gate (without the final `git grep`). If anything is red, stop
+Before any edit run the step 6 gate code block without its two `grep` lines (they match the
+template by design). If anything is red, stop
 and report it to the user: the template itself is broken, and bootstrap must not start on it.
 
 ## 2. Rename
@@ -41,14 +42,16 @@ Then in every tracked file, case-sensitive, in this order (for example
 3. `rust-template` with `<name>` (this also covers the GitHub URLs)
 4. `One line on what the tool does.` with the description
 
-The description goes into a sed replacement: escape `/`, `&` and `\` in it, or do the
-replacement with `uv run python` instead.
+The description goes into a sed replacement and into TOML strings: escape `/`, `&` and `\`
+for sed and `"` for TOML, or do the replacement with `uv run python` instead.
 
 A rename changes the length of padded lines, so re-align the trailing `#` comments that moved
-in `Cargo.toml` and `dist-workspace.toml` to the column of their neighbours.
+in `Cargo.toml` and `dist-workspace.toml` to the column of the lines around them; when the
+code is too long for that column, one space before the `#`.
 
-Replace `keywords = ["cli"]` in `Cargo.toml` with 1 to 5 lowercase words from the description
-(crates.io rules), keeping `"cli"` or adding `"tui"` for the kind. Leave `categories`.
+Replace `keywords = ["cli"]` in `Cargo.toml` with at most 5 lowercase keywords (crates.io
+limit) that say what the tool is about, the last one being the kind: `"cli"` for a CLI,
+`"tui"` for a TUI. Leave `categories`.
 
 Check, both print nothing:
 ```bash
@@ -119,6 +122,9 @@ Only if the user picked a subset:
   `installers = ["powershell"]`. With no Windows target left, set `installers = ["shell"]`.
 - `README.md` `## Install`: delete the "macOS and Linux:" paragraph and its code block when
   the shell installer is gone, or the "Windows (PowerShell):" ones when powershell is gone.
+- Keep both OS entries in the `ci.yml` matrix whatever the targets: BK develops on Windows,
+  and the Ubuntu job keeps the code portable. Keep the commented options in
+  `dist-workspace.toml`; they are a menu, not configuration.
 
 ## 4. Port
 
@@ -150,7 +156,8 @@ the behaviour reference until parity."
 ## 6. Verify and commit
 
 TUI only, snapshots first: `cargo nextest run --all-features` fails on
-`ui::tests::home_screen`, because the renamed title changed the border width. Run
+`ui::tests::home_screen`: the rename changed the title text inside the stored snapshot but not
+its border, so the stored screen no longer matches what `draw` renders. Run
 `cargo insta pending-snapshots`, read the `.snap.new` next to the renamed snapshot, and accept
 with `cargo insta accept` only when the one difference in the screen is the title line.
 Header metadata such as `assertion_line` does not count; insta drops it on accept. Any other
