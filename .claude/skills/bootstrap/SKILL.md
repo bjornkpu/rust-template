@@ -166,7 +166,7 @@ difference is a defect: stop and report it.
 Then the gate, every command green:
 ```bash
 cargo fmt --check
-cargo clippy --all-targets --all-features
+cargo clippy --all-targets --all-features -- -D warnings
 cargo nextest run --all-features
 cargo deny check
 cargo machete

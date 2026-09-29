@@ -5,7 +5,7 @@ One line on what the tool does.
 ## Commands
 
 - `cargo nextest run --all-features`: tests (use this, not `cargo test`)
-- `cargo clippy --all-targets --all-features`: must be clean; lints are `deny`, so this is the
+- `cargo clippy --all-targets --all-features -- -D warnings`: must be clean; lints are `deny`, so this is the
   compile gate
 - `cargo fmt --check`: formatting
 - `cargo deny check`, `cargo machete`: dependency advisories, licenses, bans, unused crates

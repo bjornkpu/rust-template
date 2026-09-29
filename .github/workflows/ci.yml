@@ -19,9 +19,9 @@ jobs:
         with:
           tool: nextest
       - run: cargo fmt --check
-      - run: cargo clippy --all-targets --all-features
+      - run: cargo clippy --all-targets --all-features -- -D warnings
       # Catches code that only compiles with the tui feature on.
-      - run: cargo clippy --all-targets
+      - run: cargo clippy --all-targets -- -D warnings
       - run: cargo nextest run --all-features --no-tests=pass
 
   deps:
