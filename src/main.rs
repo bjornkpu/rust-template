@@ -1,4 +1,4 @@
-//! rust-template: one line on what the tool does.
+//! One line on what the tool does.
 //!
 //! Wiring only: parse arguments, start logging, call `domain` for decisions and `io` for
 //! effects. `anyhow` is used here and nowhere else.

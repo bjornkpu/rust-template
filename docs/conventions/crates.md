@@ -13,28 +13,27 @@ Versions are pinned to the major only (`"1"`, `"0.30"`); `Cargo.lock` holds the 
 | Error type | `thiserror` | One `AppError` enum with derived messages and `#[from]`. |
 | Error context in `main` | `anyhow` | `.context()` at the boundary; never below `main`. |
 | Command line | `clap` (`derive`) | Derive keeps arguments, help and parsing in one struct. |
-| (De)serialisation | `serde` (`derive`), `serde_json`, `toml` | The standard; `toml` for config, JSON for data in and out. |
-| Dates and times | `jiff` (`serde`) | Correct time zones and spans, a clear API. |
 | Logging | `tracing`, `tracing-appender`, `tracing-subscriber` (`env-filter`) | Structured logs to a file, level set at runtime via `RUST_TEMPLATE_LOG`. |
-| Snapshot tests (dev) | `insta` | Output and screens reviewed as text. |
+| Snapshot tests (dev) | `insta` | Output, and TUI screens, reviewed as text. |
 | Temp dirs (dev) | `tempfile` | Isolated `RUST_TEMPLATE_HOME` per test. |
 
-<!-- tui -->
-## TUI (the `tui` feature)
+## Core (commented until first use, uncomment without asking)
 
 | Job | Crate | Why |
 | --- | --- | --- |
-| Rendering | `ratatui` | The maintained TUI library; `TestBackend` makes screens snapshot-testable. |
-| Terminal events | `crossterm` | ratatui's default backend; works on Windows. |
-| Async runtime | `tokio` (`rt-multi-thread`, `macros`, `sync`) | Background tasks and the mpsc channel feeding `update`. |
-<!-- /tui -->
+| (De)serialisation | `serde` (`derive`), `serde_json`, `toml` | The standard; `toml` for config, JSON for data in and out. |
+| Dates and times | `jiff` (`serde`) | Correct time zones and spans, a clear API. |
+
+They are commented out only so `cargo machete` passes until the first use.
 
 ## Catalog (commented until needed)
 
 | Job | Crate | Rule |
 | --- | --- | --- |
+| TUI rendering | `ratatui` | TUI only. The maintained TUI library; `TestBackend` makes screens snapshot-testable. |
+| TUI events | `crossterm` | TUI only, imported in `src/io/terminal.rs` alone. ratatui's default backend; works on Windows. |
 | HTTP | `reqwest` (`json`, `query`) | Only behind a boundary trait with a fake. |
-| Async runtime | `tokio` | Only for a TUI or network work. A plain CLI stays sync. |
+| Async runtime | `tokio` (`rt-multi-thread`, `macros`, `sync`) | Only for a TUI or network work. A plain CLI stays sync. |
 | SQLite, sync | `rusqlite` (`bundled`) | The default for CLIs. Bundled, so no system SQLite needed. |
 | SQLite, async | `sqlx` (`sqlite`, `runtime-tokio`, `macros`, `migrate`) | Only in a tokio app that wants compile-time checked queries and migrations. |
 | Platform dirs | `directories` | When the tool needs OS-native dirs; otherwise the hand-rolled `RUST_TEMPLATE_HOME` in `src/domain/paths.rs`. |

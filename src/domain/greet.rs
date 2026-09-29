@@ -1,4 +1,4 @@
-//! The hello-world behaviour. /bootstrap replaces this module.
+//! The hello-world behaviour. Replace it with the first real feature.
 
 /// The greeting for `name`; a blank name greets the world.
 #[must_use]

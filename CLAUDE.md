@@ -57,7 +57,7 @@ between a feature and a convention; when you raise a conflict, name the conventi
 
 Conventional Commits. release-plz builds `CHANGELOG.md` from the subjects, so a subject
 describes the change for a user: never a bead id, never "this commit".
-`feat: greet falls back to world for a blank name`, not `feat: rt-3 ...`.
+`feat: greet falls back to world for a blank name`, not `feat: abc-12 ...`.
 
 ## Map
 

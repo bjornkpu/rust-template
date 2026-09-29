@@ -17,7 +17,7 @@ push to main
                 |
                 v
         release.yml (dist), triggered by the tag
-            builds 5 targets, creates the GitHub Release, uploads the installers
+            builds the targets in dist-workspace.toml, creates the GitHub Release, uploads the installers
 ```
 
 Version comes from commit types: any `feat:` bumps the minor, `fix:`/`build:`/`chore:` bump the

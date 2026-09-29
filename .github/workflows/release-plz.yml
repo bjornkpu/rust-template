@@ -16,6 +16,8 @@ on:
 jobs:
   release-plz-release:
     name: release-plz release
+    # The template repo itself never releases; repos created from it do.
+    if: ${{ !github.event.repository.is_template }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -30,6 +32,7 @@ jobs:
 
   release-plz-pr:
     name: release-plz PR
+    if: ${{ !github.event.repository.is_template }}
     runs-on: ubuntu-latest
     concurrency:
       group: release-plz-${{ github.ref }}

@@ -22,10 +22,6 @@ tui = ["dep:ratatui", "dep:crossterm", "dep:tokio"]
 anyhow = "1"                                       # error context, main.rs only
 thiserror = "2"                                    # AppError in src/error.rs
 clap = { version = "4", features = ["derive"] }    # command line
-serde = { version = "1", features = ["derive"] }   # (de)serialisation
-serde_json = "1"                                   # JSON in and out
-toml = "1"                                         # config files
-jiff = { version = "0.2", features = ["serde"] }   # dates and times; never chrono
 tracing = "0.1"                                    # logging, to a file, never stdout
 tracing-appender = "0.2"                           # log file writer
 tracing-subscriber = { version = "0.3", features = ["env-filter"] } # RUST_TEMPLATE_LOG=debug
@@ -34,6 +30,13 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] } # RUST_TEMPL
 ratatui = { version = "0.30", optional = true }    # rendering; TestBackend for snapshots
 crossterm = { version = "0.29", optional = true }  # terminal events; only io/terminal.rs
 tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"], optional = true } # TUI or network only
+
+# Core: nearly every tool needs these. Commented only so cargo machete stays green until the
+# first use; uncomment without asking.
+# serde = { version = "1", features = ["derive"] }   # (de)serialisation
+# serde_json = "1"                                   # JSON in and out
+# toml = "1"                                         # config files
+# jiff = { version = "0.2", features = ["serde"] }   # dates and times; never chrono
 
 # Catalog. One line per job, with the rule for using it.
 # reqwest = { version = "0.13", features = ["json", "query"] } # HTTP; only behind a boundary trait

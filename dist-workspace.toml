@@ -27,7 +27,7 @@ cargo-auditable = true
 # install-success-msg = "run `rust-template init` next"
 # include = ["docs/config.example.toml"]  # extra files in the archive
 # [dist.bin-aliases]
-# rust-template = ["rt"]                  # short alias installed next to the binary
+# rust-template = ["<short>"]             # short alias installed next to the binary
 # [dist.dependencies.apt]
 # libfoo-dev = "*"                        # system packages for the build
 # Never: dispatch-releases = true. Releases start from the tag release-plz pushes.
