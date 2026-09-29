@@ -45,7 +45,9 @@ between a feature and a convention; when you raise a conflict, name the conventi
 - Never weaken `[lints]` in `Cargo.toml` to make code compile. `#[allow(clippy::...)]` goes on
   one item only, with a one-line comment saying why. Ask BK before relaxing
   `arithmetic_side_effects` or `as_conversions`.
-- No `unsafe` (`unsafe_code = "forbid"`).
+- No `unsafe` (`unsafe_code = "forbid"`). When FFI is unavoidable, ask BK: the crate then uses
+  `unsafe_code = "deny"` and one `#[allow(unsafe_code)]` item with a reason and `SAFETY:`
+  comments.
 - Pure core, thin IO shell: only `src/io/` and `src/main.rs` do IO.
 - Never break an invariant in `docs/invariants.md`. An invariant without a test is a bug.
 - Never accept a snapshot you have not read.

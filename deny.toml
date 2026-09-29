@@ -7,15 +7,20 @@ all-features = true
 ignore = []
 
 [licenses]
-# Permissive only. Add a license here when a chosen crate needs it, never to unblock an
-# alternative crate.
+# Permissive licenses, plus MPL-2.0: it only asks that changes to MPL files stay open, and
+# crates.io dependencies are used unchanged. The GPL family stays out: it would make the whole
+# binary GPL. Add a license here when a chosen crate needs it, never to unblock an alternative
+# crate.
 allow = [
     "MIT",
     "Apache-2.0",
     "Apache-2.0 WITH LLVM-exception",
     "BSD-2-Clause",
     "BSD-3-Clause",
+    "BSL-1.0",
+    "CDLA-Permissive-2.0",
     "ISC",
+    "MPL-2.0",
     "Unicode-3.0",
     "Zlib",
 ]

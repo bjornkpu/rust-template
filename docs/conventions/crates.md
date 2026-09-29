@@ -62,6 +62,9 @@ They are commented out only so `cargo machete` passes until the first use.
 
 ## Adding a license
 
-`deny.toml` allows permissive licenses only. When a chosen crate needs a license not on the
-list, add it with a comment naming that crate. Never add one to unblock a crate that is not
-chosen.
+`deny.toml` allows permissive licenses (MIT, Apache-2.0, BSD, BSL-1.0, CDLA-Permissive-2.0,
+ISC, Unicode-3.0, Zlib) and MPL-2.0, which only asks that changes to MPL files stay open. The
+GPL family stays out: it would make the whole binary GPL. When a chosen crate needs a license
+not on the list, add it with a comment naming that crate. A crate with no license gets a
+`[[licenses.clarify]]` or `exceptions` entry with a reason, or is replaced. Never add a
+license to unblock a crate that is not chosen.
