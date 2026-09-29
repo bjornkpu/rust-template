@@ -22,25 +22,48 @@ Use AskUserQuestion, one batch:
 
 Derive: `snake` = name with `-` replaced by `_`; `SCREAM` = `snake` uppercased.
 
+## 1b. Baseline
+
+Before any edit run the step 6 gate (without the final `git grep`). If anything is red, stop
+and report it to the user: the template itself is broken, and bootstrap must not start on it.
+
 ## 2. Rename
 
-In every tracked file, case-sensitive, in this order (for example
+First rename files: `git mv` every tracked file whose name contains `rust_template` or
+`rust-template` (the TUI screen snapshot in `src/ui/snapshots/`) to the same name with
+`<snake>` or `<name>`. insta finds snapshots by the crate's module path, so a snapshot left
+under the old name becomes an orphan.
+
+Then in every tracked file, case-sensitive, in this order (for example
 `git ls-files -z -- . ':!.claude/skills/bootstrap' | xargs -0 sed -i 's/RUST_TEMPLATE_/<SCREAM>_/g'`):
 1. `RUST_TEMPLATE_` with `<SCREAM>_`
 2. `rust_template` with `<snake>`
 3. `rust-template` with `<name>` (this also covers the GitHub URLs)
 4. `One line on what the tool does.` with the description
 
-Set `keywords` in `Cargo.toml` to 1 to 5 words from the description.
+The description goes into a sed replacement: escape `/`, `&` and `\` in it, or do the
+replacement with `uv run python` instead.
 
-Check: `git grep -in "rust.template\|one line on what" -- . ':!.claude/skills/bootstrap'`
-prints nothing.
+A rename changes the length of padded lines, so re-align the trailing `#` comments that moved
+in `Cargo.toml` and `dist-workspace.toml` to the column of their neighbours.
+
+Replace `keywords = ["cli"]` in `Cargo.toml` with 1 to 5 lowercase words from the description
+(crates.io rules), keeping `"cli"` or adding `"tui"` for the kind. Leave `categories`.
+
+Check, both print nothing:
+```bash
+git grep -in "rust.template\|one line on what" -- . ':!.claude/skills/bootstrap'
+git ls-files | grep -i "rust.template" | grep -v "^.claude/skills/bootstrap"
+```
 
 ## 3. Prune
 
 For the Cargo.toml edits, delete the named lines together with the blank line that follows
 them. For the `.md` edits, skip this SKILL.md, and afterwards collapse any run of blank lines
-to one and leave no blank line at the end of the file.
+outside fenced code blocks to one, and leave no blank line at the end of the file.
+
+Keep `--all-features` in the gate, CI, bacon and the hook after a prune: it is harmless
+without features and right the day a project adds one.
 
 ### CLI
 
@@ -48,8 +71,8 @@ to one and leave no blank line at the end of the file.
   ``# TUI, behind the `tui` feature.`` line with the three lines under it. Then add these three
   lines directly under `# Catalog. One line per job, with the rule for using it.`:
   ```toml
-  # ratatui = "0.30"                               # TUI rendering; TestBackend for snapshots
-  # crossterm = "0.29"                             # TUI terminal events; only io/terminal.rs
+  # ratatui = "0.30"                                 # TUI rendering; TestBackend for snapshots
+  # crossterm = "0.29"                               # TUI terminal events; only io/terminal.rs
   # tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"] } # TUI or network only
   ```
 - `git rm -rf src/app src/ui src/io/terminal.rs` (the rename left them modified, so `-f`).
@@ -59,7 +82,8 @@ to one and leave no blank line at the end of the file.
 - `src/io.rs`: delete `#[cfg(feature = "tui")]` and `pub mod terminal;`.
 - `.github/workflows/ci.yml`: delete the `# Catches code that only compiles with the tui
   feature on.` comment and the `cargo clippy --all-targets` step under it.
-- Every `.md` file: delete each `<!-- tui -->` ... `<!-- /tui -->` block, markers included.
+- Every `.md` file: delete the whole lines from each `<!-- tui -->` line through its
+  `<!-- /tui -->` line, both marker lines included.
 
 ### TUI
 
@@ -71,7 +95,8 @@ to one and leave no blank line at the end of the file.
   crossterm = "0.29"                                 # terminal events; only io/terminal.rs
   tokio = { version = "1", features = ["rt-multi-thread", "macros", "sync"] } # TUI or network only
   ```
-- Delete every `#[cfg(feature = "tui")]` line, keeping the item under it.
+- In every tracked `.rs` file, delete every `#[cfg(feature = "tui")]` line (some are
+  indented), keeping the item under it.
 - `src/main.rs`: the TUI becomes the no-command default.
   - `Cli.command` becomes `Option<Command>`.
   - Delete the `/// Open the terminal UI.` `Tui,` variant.
@@ -82,6 +107,8 @@ to one and leave no blank line at the end of the file.
   feature on.` comment and the `cargo clippy --all-targets` step under it.
 - `CLAUDE.md`: replace the line ``- `cargo run --features tui -- tui`: run the terminal UI``
   with ``- `cargo run`: open the terminal UI (no command)``.
+- `README.md` `## Usage`: add a first line `<name>` in the code block, and under the block
+  "Run without a command to open the terminal UI.".
 - Every `.md` file: delete only the `<!-- tui -->` and `<!-- /tui -->` lines, keeping the
   content between them.
 
@@ -124,9 +151,10 @@ the behaviour reference until parity."
 
 TUI only, snapshots first: `cargo nextest run --all-features` fails on
 `ui::tests::home_screen`, because the renamed title changed the border width. Run
-`cargo insta pending-snapshots`, read the `.snap.new` next to the old snapshot, and accept with
-`cargo insta accept` only when the one difference is the title line. Anything else is a defect:
-stop and report it.
+`cargo insta pending-snapshots`, read the `.snap.new` next to the renamed snapshot, and accept
+with `cargo insta accept` only when the one difference in the screen is the title line.
+Header metadata such as `assertion_line` does not count; insta drops it on accept. Any other
+difference is a defect: stop and report it.
 
 Then the gate, every command green:
 ```bash
@@ -136,9 +164,11 @@ cargo nextest run --all-features
 cargo deny check
 cargo machete
 git grep -in "rust.template\|one line on what\|feature = \"tui\"\|<!-- /\?tui" -- . ':!.claude/skills/bootstrap'
+git ls-files | grep -i "rust.template" | grep -v "^.claude/skills/bootstrap"
+cargo insta test --all-features --test-runner nextest --unreferenced=reject
 ```
-The last command must print nothing. Fix what the rename or prune broke. If a failure was
-already there before bootstrap, stop and report it to the user; never commit a red gate.
+The two `grep` commands must print nothing. Fix what the rename or prune broke; the baseline in
+step 1b showed the template was green. Never commit a red gate.
 
 ```bash
 git add -A

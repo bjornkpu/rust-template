@@ -27,7 +27,7 @@ editing the version in the release PR before merging.
 ## Cutting a release
 
 1. Merge the open `chore(release): ...` PR.
-2. Watch Actions. Three workflow runs follow, in order: release-plz release, then dist.
+2. Watch Actions. Two workflow runs follow, in order: release-plz release, then dist.
 
 There is nothing to do by hand. To release without waiting for the PR, or to fix a botched
 release, the manual path still works:
