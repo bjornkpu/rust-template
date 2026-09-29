@@ -165,7 +165,7 @@ cargo deny check
 cargo machete
 git grep -in "rust.template\|one line on what\|feature = \"tui\"\|<!-- /\?tui" -- . ':!.claude/skills/bootstrap'
 git ls-files | grep -i "rust.template" | grep -v "^.claude/skills/bootstrap"
-cargo insta test --all-features --test-runner nextest --unreferenced=reject
+cargo insta test --all-features --unreferenced=reject
 ```
 The two `grep` commands must print nothing. Fix what the rename or prune broke; the baseline in
 step 1b showed the template was green. Never commit a red gate.
