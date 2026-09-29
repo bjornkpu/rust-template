@@ -61,4 +61,5 @@ Upgrading dist: newer versions are only on GitHub releases, not crates.io. Insta
 | --- | --- | --- |
 | `RELEASE_PLZ_TOKEN` | release-plz | A tag pushed with the default `GITHUB_TOKEN` does not trigger other workflows, so dist would never run. Fine-grained PAT on this repo, Contents and Pull requests read/write. |
 
-It expires. When releases start silently doing nothing, check it first.
+It expires. When the release-plz jobs fail with `environment variable GITHUB_TOKEN is empty`
+or an authentication error, check it first.

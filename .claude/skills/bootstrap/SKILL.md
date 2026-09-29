@@ -186,8 +186,8 @@ git commit -m "chore: bootstrap from rust-template"
 
 Print these manual GitHub steps:
 - Settings > Secrets and variables > Actions: add `RELEASE_PLZ_TOKEN`, a fine-grained PAT on
-  this repo with Contents and Pull requests read/write. Without it releases silently do
-  nothing.
+  this repo with Contents and Pull requests read/write. Until it exists, both release-plz
+  jobs fail on every push to main with `environment variable GITHUB_TOKEN is empty`.
 - Settings > Actions > General: allow GitHub Actions to create and approve pull requests.
 
 ## 8. Hand off
